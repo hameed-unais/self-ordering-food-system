@@ -16,3 +16,7 @@ add_ons = {
     "Fried/Grilled Chicken Leg Quarter (per piece)" : 3.50,
     "Fried Chicken Wing (1pc)" : 1.50,
 }
+
+print("Welcome to our restaurant! Here is our menu:")
+for items, prices in food_menu.items():
+    print(f"{items}\t: \t${prices:.2f}")
