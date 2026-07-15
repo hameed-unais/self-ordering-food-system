@@ -1,22 +1,24 @@
 food_menu = {
-    "Ayam Bakar Set (Grilled Chicken Set)" : 5.80,
-    "Dori Bakar set (Grilled Dori Set)" : 5.90,
-    "Ayam Bakar Set (Grilled Boneless Chicken Set)" : 6.30,
-    "Gulai Ayam Set (Curry Chicken Whole Leg Set)" : 6.20,
-    "Ayam Penyet Set (Fried Chicken Set)" : 5.80,
-    "Dori Penyet Set (Fried Dori Set)" : 5.90,
-    "Ayam Penyet Set (Fried Boneless Chicken Set)" : 6.30,
-    "Ayam Penyet Set (Fried Chicken Wing Set)" : 5.60
+    "01":{"name":"Ayam Bakar Set", "transl": "Grilled Chicken Set", "price": 5.80},
+    "02":{"name":"Dori Bakar Set", "transl": "Grilled Dori Set", "price": 5.90},
+    "03":{"name":"Ayam Bakar Set", "transl": "Grilled Boneless Chicken Set", "price": 6.30},
+    "04":{"name":"Gulai Ayam Set", "transl": "Curry Chicken Whole Leg Set", "price": 6.20},
+    "05":{"name":"Ayam Penyet Set", "transl": "Fried Chicken Set", "price": 5.80},
+    "06":{"name":"Dori Penyet Set", "transl": "Fried Dori Set", "price": 5.90},
+    "07":{"name":"Ayam Penyet Set", "transl":"Fried Boneless Chicken Set", "price": 6.30},
+    "08":{"name":"Ayam Penyet Set", "transl":"Fried Chicken Wing Set", "price":5.60}
 }
 add_ons = {
-    "Rice" : 0.50,
-    "Egg" : 0.80,
-    "Chili" : 0.50,
-    "Fried/Grilled Dori Fish (per piece)" : 3.50,
-    "Fried/Grilled Chicken Leg Quarter (per piece)" : 3.50,
-    "Fried Chicken Wing (1pc)" : 1.50,
+    "A1":{"name":"Rice", "price": 0.50,},
+    "A2":{"name":"Egg", "price": 0.80,},
+    "A3":{"name":"Chili", "price": 0.50,},
+    "A4":{"name":"Fried/Grilled Dori Fish (per piece)", "price": 3.50,},
+    "A5":{"name":"Fried/Grilled Chicken Leg Quarter (per piece)", "price": 3.50,},
+    "A6":{"name":"Fried Chicken Wing (1pc)", "price": 1.50,},
 }
-
-print("Welcome to our restaurant! Here is our menu:")
-for items, prices in food_menu.items():
-    print(f"{items}\t: \t${prices:.2f}")
+print("Penyet + BBQ Set Meal")
+for item_no, item in food_menu.items():
+    print(f"\n[{item_no}]/\t{item['name']:<30} : ${item['price']:.2f} \n\t{item['transl']}")
+print("\nAdd-ons")
+for add_on_no, add_on in add_ons.items():
+    print(f"\n{add_on_no}/\t{add_on['name']:<30} : ${add_on['price']:.2f}")
