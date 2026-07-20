@@ -33,12 +33,17 @@ def print_menu():
 def get_order():
     while True:
         input_item = input('\nPlease enter the item number you want to order (e.g., 01, 02, A1, A2):')
-        if input_item in FOOD_MENU:
-            shopping_cart[input_item] = FOOD_MENU[input_item]
-            break
-        elif input_item in ADD_ONS:
-            shopping_cart[input_item] = ADD_ONS[input_item]
-            break
+        if input_item in FOOD_MENU or input_item in ADD_ONS:
+            qty = int(input("Enter quantity: "))
+            if input_item in shopping_cart:
+                shopping_cart [input_item]['qty'] += qty
+            else:
+                if input_item in FOOD_MENU:
+                    shopping_cart[input_item] = FOOD_MENU[input_item].copy()
+                    break
+                elif input_item in ADD_ONS:
+                    shopping_cart[input_item] = ADD_ONS[input_item].copy()
+                    break
         else:
             print("Invalid item number. Please try again.")
 
