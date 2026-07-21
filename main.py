@@ -28,22 +28,26 @@ def print_menu():
     for add_on_no, add_on in ADD_ONS.items():
         print(f"\n{add_on_no}/\t{add_on['name']:<30} : ${add_on['price']:.2f}")
 #getting user input for ordering items
-#NEED TO FIX IN FUTURE AS shopping_cart[input_item] = FOOD_MENU[input_item] JUST OVERWRITES WHEN 
-#SAME OPTION PICKED, MUST ADUJUST FOR QUANTITY HANDLING
 def get_order():
     while True:
         input_item = input('\nPlease enter the item number you want to order (e.g., 01, 02, A1, A2):')
         if input_item in FOOD_MENU or input_item in ADD_ONS:
-            qty = int(input("Enter quantity: "))
+            while True:
+                try:
+                    qty = int(input("Enter quantity: "))
+                    break
+                except ValueError:
+                    print("Invalid input! Please enter a numeric value.")
+
             if input_item in shopping_cart:
                 shopping_cart [input_item]['qty'] += qty
             else:
                 if input_item in FOOD_MENU:
                     shopping_cart[input_item] = FOOD_MENU[input_item].copy()
-                    break
-                elif input_item in ADD_ONS:
+                else:
                     shopping_cart[input_item] = ADD_ONS[input_item].copy()
-                    break
+                shopping_cart[input_item]['qty'] = qty
+            break
         else:
             print("Invalid item number. Please try again.")
 
@@ -52,19 +56,22 @@ def order_summary(order):
     print("\nOrder Summary:")
     total_price = 0
     for item in order.values():
+        total_total = item['price'] * item['qty']
         if 'transl' in item:
-            print(f"\t{item['name']:<30} : ${item['price']:.2f} \n\t{item['transl']}")
+            print(f"\t{item['name']:<30} x{item['qty']} : ${total_total:.2f} \n\t{item['transl']}")
         else:
-            print(f"\t{item['name']:<30} : ${item['price']:.2f}")
-        total_price += item['price']
+            print(f"\t{item['name']:<30} x{item['qty']} : ${total_total:.2f}")
+        total_price += total_total
     print(f"\nTotal: ${total_price:.2f}")
  
 #Shows the items in cart and total after every input   
 def items_in_cart(order):
     total_price = 0
+    total_qty = 0
     for item in order.values():
-        total_price += item['price']
-    print(f"\nNumber of items in cart: {len(order)}")
+        total_price += item['price'] * item['qty']
+        total_qty += item['qty']
+    print(f"\nNumber of items in cart: {total_qty}")
     print(f"Cart Total: ${total_price:.2f}")
 
 while True:
@@ -73,11 +80,11 @@ while True:
     items_in_cart(order)
     continue_programme = False
     while True:
-        opinion = input("Do you want to add more items?\nPlease enter 'y' for yes and 'n' for no")
-        if opinion.lower() == 'y':
+        opinion = input("\nDo you want to add more items?\nPlease enter 'y' for yes and 'n' for n: ").strip().lower()
+        if opinion == 'y':
             continue_programme = True
             break
-        elif opinion.lower() == 'n':
+        elif opinion == 'n':
             break
         else:
             print("invalid input. Please enter 'y' or 'no'")
@@ -86,7 +93,7 @@ while True:
     order_summary(order)
     break_programme = False
     while True:
-        opinion2 = input("Do you want to confirm your order?\nPlease enter 'y' for yes and 'n' for no")
+        opinion2 = input("\nDo you want to confirm your order?\nPlease enter 'y' for yes and 'n' for no: ")
         if opinion2.lower() == 'y':
             break_programme = True
             break
