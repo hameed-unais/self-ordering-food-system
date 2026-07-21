@@ -51,6 +51,34 @@ def get_order():
         else:
             print("Invalid item number. Please try again.")
 
+#Remove items from cart
+def remove_item():
+    if not shopping_cart:
+        print("\nYour cart is empty. Nothing to remove")
+        return
+    print("\nItems in your cart:")
+    for item_no, item in shopping_cart.items():
+        if 'transl' in item:
+            print(f"[{item_no}]\t{item['name']:<30} x{item['qty']} : ${item['price']:.2f} \n\t{item['transl']}")
+        else:
+            print(f"[{item_no}]\t{item['name']:<30} x{item['qty']} : ${item['price']:.2f}")
+    while True:
+        remove_choice = input("\nEnter the item number to remove the item / Enter 'cancel' to go back: ")
+        if remove_choice.lower() == 'cancel':
+            return
+        if remove_choice in shopping_cart:
+            qty_to_remove = int(input(f"How many to remove? (currently {shopping_cart[remove_choice]['qty']})"))
+
+            if qty_to_remove >= shopping_cart[remove_choice]['qty']:
+                del shopping_cart[remove_choice]
+                print("Item fully removed from cart.")
+            else:
+                shopping_cart[remove_choice]['qty'] -= qty_to_remove
+                print(f"Removed {qty_to_remove}. {shopping_cart[remove_choice]['qty']} remaining.") 
+                break
+        else:
+            print("That item is not in your cart. Please try again")
+            
 #the summary and receipt of the order
 def order_summary(order):
     print("\nOrder Summary:")
@@ -74,17 +102,35 @@ def items_in_cart(order):
     print(f"\nNumber of items in cart: {total_qty}")
     print(f"Cart Total: ${total_price:.2f}")
 
+#Applying NYP student/ staff discount
+#def discount_nyp():
+    #print("\nDiscounts" \
+    #"\n[01] NYP student discount (10% \disocunt)" \
+   # "\n[02] NYP staff discount (5% \discount)")
+    #while True:
+       # eligibility = input("Enter [01] or [02] for any eligible discount. Enter 'next' if not eligible:")
+       # if eligibility == '01':
+            #for item in order.values():
+            
+    
 while True:
     print_menu()
     get_order()
     items_in_cart(order)
+
+    remove_choice = input("\nDo you want to remove an item\nPlease enter 'y; for yes and 'n' for no: ")
+    if remove_choice.lower().strip():
+        remove_item()
+        items_in_cart(order)
+
+
     continue_programme = False
     while True:
-        opinion = input("\nDo you want to add more items?\nPlease enter 'y' for yes and 'n' for n: ").strip().lower()
-        if opinion == 'y':
+        opinion = input("\nDo you want to add more items?\nPlease enter 'y' for yes and 'n' for no: ")
+        if opinion.lower().strip() == 'y':
             continue_programme = True
             break
-        elif opinion == 'n':
+        elif opinion.lower().strip() == 'n':
             break
         else:
             print("invalid input. Please enter 'y' or 'no'")
