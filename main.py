@@ -1,4 +1,4 @@
-#Deining the menu items and prices
+#Defining the menu items and prices
 FOOD_MENU = {
     "01":{"name":"Ayam Bakar Set", "transl": "Grilled Chicken Set", "price": 5.80},
     "02":{"name":"Dori Bakar Set", "transl": "Grilled Dori Set", "price": 5.90},
@@ -19,14 +19,42 @@ ADD_ONS = {
 }
 shopping_cart = {} #storing the items user wants to order
 order = shopping_cart
+
+#choose to dine-in or take-away
+def get_order_type():
+    while True:
+        order_type = input("Welcome, Is this for Dine-in or Takeaway? (d/t): ")
+        if order_type.lower() == 'd':
+            return "Dine-in"
+        elif order_type.lower():
+            return "Takeaway"
+        else:
+            print("Invalid input. please enter 'd' or 't'.")
+
 #printing menu items and prices
 def print_menu():
-    print("Penyet + BBQ Set Meal")
-    for item_no, item in FOOD_MENU.items():
-        print(f"\n[{item_no}]/\t{item['name']:<30} : ${item['price']:.2f} \n\t{item['transl']}")
+    print("\nPenyet + BBQ Set Meal".center(80, ))
+    print("="*80)
+
+    food_list = list(FOOD_MENU.items())
+#converts food menu.item() into a list. each key value pair gets turned into a tuple but
+# the nested dictionary stays a dictionary due to the .item() ( e.g (01, {'name:..., x : y}) ).
+    for i in range(0, len(food_list), 2):
+#len(food_list) = 8. step = 2, so i is 0,2,4,6,8.
+        row = food_list[i:i+2]
+#when i is 0, i + 2 = 2 which gives food_list[1], when i = 2, i + 2 = 4 which gives food_list[3]
+#converted the dictionary to list to be able to access and splice the elements better
+        line = "" # creates empty string
+        for no, item in row: #no corresponds to the item number, item corresponds to nested dict
+            line += f"[{no}] {item['name']:<22} ${item['price']:.2f}     " #inserts into the empty string
+        print(line)
+
     print("\nAdd-ons")
+    print("-" * 80)
     for add_on_no, add_on in ADD_ONS.items():
-        print(f"\n{add_on_no}/\t{add_on['name']:<30} : ${add_on['price']:.2f}")
+        print(f"\n[{add_on_no}]\t{add_on['name']:<50} : ${add_on['price']:.2f}")
+
+
 #getting user input for ordering items
 def get_order():
     while True:
@@ -64,14 +92,14 @@ def remove_item():
             print(f"[{item_no}]\t{item['name']:<30} x{item['qty']} : ${item['price']:.2f}")
     while True:
         remove_choice = input("\nEnter the item number to remove the item / Enter 'cancel' to go back: ")
-        if remove_choice.lower() == 'cancel':
+        if remove_choice.lower().strip() == 'cancel':
             return
         if remove_choice in shopping_cart:
             qty_to_remove = int(input(f"How many to remove? (currently {shopping_cart[remove_choice]['qty']})"))
-
             if qty_to_remove >= shopping_cart[remove_choice]['qty']:
                 del shopping_cart[remove_choice]
                 print("Item fully removed from cart.")
+                break
             else:
                 shopping_cart[remove_choice]['qty'] -= qty_to_remove
                 print(f"Removed {qty_to_remove}. {shopping_cart[remove_choice]['qty']} remaining.") 
@@ -80,20 +108,27 @@ def remove_item():
             print("That item is not in your cart. Please try again")
             
 #the summary and receipt of the order
-def order_summary(order):
+def order_summary(discount_rate):
     print("\nOrder Summary:")
     total_price = 0
     for item in order.values():
-        total_total = item['price'] * item['qty']
+        each_total = item['price'] * item['qty']
         if 'transl' in item:
-            print(f"\t{item['name']:<30} x{item['qty']} : ${total_total:.2f} \n\t{item['transl']}")
+            print(f"\t{item['name']:<30} x{item['qty']} : ${each_total:.2f} \n\t{item['transl']}")
         else:
-            print(f"\t{item['name']:<30} x{item['qty']} : ${total_total:.2f}")
-        total_price += total_total
-    print(f"\nTotal: ${total_price:.2f}")
+            print(f"\t{item['name']:<30} x{item['qty']} : ${each_total:.2f}")
+        total_price += each_total
+
+    discount_amount = total_price * discount_rate
+    final_total = total_price - discount_amount
+
+    print(f"\nSubtotal :${total_price:.2f}")
+    if discount_rate > 0:
+        print(f"Discount ({discount_rate*100:.0f}%): -${discount_amount:.2f}")
+    print(f"\nTotal: ${final_total:.2f}")
  
 #Shows the items in cart and total after every input   
-def items_in_cart(order):
+def items_in_cart():
     total_price = 0
     total_qty = 0
     for item in order.values():
@@ -103,25 +138,40 @@ def items_in_cart(order):
     print(f"Cart Total: ${total_price:.2f}")
 
 #Applying NYP student/ staff discount
-#def discount_nyp():
-    #print("\nDiscounts" \
-    #"\n[01] NYP student discount (10% \disocunt)" \
-   # "\n[02] NYP staff discount (5% \discount)")
-    #while True:
-       # eligibility = input("Enter [01] or [02] for any eligible discount. Enter 'next' if not eligible:")
-       # if eligibility == '01':
-            #for item in order.values():
+def discount_nyp():
+    print("\nDiscounts"
+    "\n[01] NYP student discount (10% discount)"
+    "\n[02] NYP staff discount (5% discount)")
+    while True:
+        eligibility = input("Enter [01] or [02] for any eligible discount. Enter 'next' if not eligible:")
+        if eligibility == '01':
+            print("10% student discount applied")
+            return 0.10
+        elif eligibility == '02':
+            print("5% staff discount applied")
+            return 0.05
+        elif eligibility == 'next':
+            return 0.0
+        else:
+            print("Invalid input. Please try again.")
             
     
 while True:
+    get_order_type()
     print_menu()
     get_order()
-    items_in_cart(order)
+    items_in_cart()
 
-    remove_choice = input("\nDo you want to remove an item\nPlease enter 'y; for yes and 'n' for no: ")
-    if remove_choice.lower().strip():
-        remove_item()
-        items_in_cart(order)
+    while True:
+        remove_choice = input("\nDo you want to remove an item\nPlease enter 'y; for yes and 'n' for no: ")
+        if remove_choice.lower().strip() == 'y':
+            remove_item()
+            items_in_cart()
+            break
+        elif remove_choice == 'n':
+            break
+        else:
+            "Invalid input. Please enter 'y' or 'n'."
 
 
     continue_programme = False
@@ -136,7 +186,9 @@ while True:
             print("invalid input. Please enter 'y' or 'no'")
     if continue_programme:
         continue
-    order_summary(order)
+    discount_rate = discount_nyp()
+    discount_type = get_order_type()
+    order_summary(discount_rate)
     break_programme = False
     while True:
         opinion2 = input("\nDo you want to confirm your order?\nPlease enter 'y' for yes and 'n' for no: ")
